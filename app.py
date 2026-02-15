@@ -31,15 +31,16 @@ st.set_page_config(
 def register_font():
     """日本語フォントを登録する"""
     font_name = "Japanese"
-    local_fonts = [
+    # TrueType (.ttf) フォントのみ — reportlab TTFont は CFF(.otf) 非対応
+    font_paths = [
+        # Linux (Streamlit Cloud) — fonts-takao-gothic パッケージ
+        "/usr/share/fonts/truetype/takao-gothic/TakaoGothic.ttf",
+        "/usr/share/fonts/truetype/takao-gothic/TakaoPGothic.ttf",
+        # Windows
         "C:/Windows/Fonts/msgothic.ttc",
         "C:/Windows/Fonts/meiryo.ttc",
-        "/usr/share/fonts/truetype/fonts-japanese-gothic.ttf",
-        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
-        "/usr/share/fonts/opentype/noto/NotoSansCJK-JP-Regular.otf",
-        "/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc",
     ]
-    for fp in local_fonts:
+    for fp in font_paths:
         if os.path.exists(fp):
             try:
                 pdfmetrics.registerFont(TTFont(font_name, fp))
