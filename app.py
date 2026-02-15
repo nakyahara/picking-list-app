@@ -31,18 +31,28 @@ st.set_page_config(
 def register_font():
     """日本語フォントを登録する"""
     font_name = "Japanese"
-    local_fonts = [
+    # .ttf（単体フォント）を優先 → .ttc は subfontIndex=0 で埋め込み
+    ttf_fonts = [
+        "/usr/share/fonts/truetype/fonts-japanese-gothic.ttf",
+        "/usr/share/fonts/opentype/noto/NotoSansCJK-JP-Regular.otf",
+    ]
+    ttc_fonts = [
         "C:/Windows/Fonts/msgothic.ttc",
         "C:/Windows/Fonts/meiryo.ttc",
-        "/usr/share/fonts/truetype/fonts-japanese-gothic.ttf",
         "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
-        "/usr/share/fonts/opentype/noto/NotoSansCJK-JP-Regular.otf",
         "/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc",
     ]
-    for fp in local_fonts:
+    for fp in ttf_fonts:
         if os.path.exists(fp):
             try:
                 pdfmetrics.registerFont(TTFont(font_name, fp))
+                return font_name
+            except:
+                pass
+    for fp in ttc_fonts:
+        if os.path.exists(fp):
+            try:
+                pdfmetrics.registerFont(TTFont(font_name, fp, subfontIndex=0))
                 return font_name
             except:
                 pass
