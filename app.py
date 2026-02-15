@@ -31,40 +31,26 @@ st.set_page_config(
 def register_font():
     """日本語フォントを登録する"""
     font_name = "Japanese"
-    # .ttf（単体フォント）を優先 → .ttc は subfontIndex=0 で埋め込み
-    ttf_fonts = [
-        "/usr/share/fonts/truetype/fonts-japanese-gothic.ttf",
-        "/usr/share/fonts/opentype/noto/NotoSansCJK-JP-Regular.otf",
-    ]
-    ttc_fonts = [
-        "C:/Windows/Fonts/msgothic.ttc",
-        "C:/Windows/Fonts/meiryo.ttc",
-        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
-        "/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc",
-    ]
-    for fp in ttf_fonts:
-        if os.path.exists(fp):
-            try:
-                pdfmetrics.registerFont(TTFont(font_name, fp))
-                return font_name
-            except:
-                pass
-    for fp in ttc_fonts:
-        if os.path.exists(fp):
-            try:
-                pdfmetrics.registerFont(TTFont(font_name, fp, subfontIndex=0))
-                return font_name
-            except:
-                pass
-
+    # バンドルフォント（.otf）を最優先 — 確実にPDFに埋め込まれる
     app_dir = os.path.dirname(os.path.abspath(__file__))
-    bundled_font = os.path.join(app_dir, "fonts", "NotoSansJP-Regular.ttf")
+    bundled_font = os.path.join(app_dir, "fonts", "NotoSansJP-Medium.ttf")
     if os.path.exists(bundled_font):
         try:
             pdfmetrics.registerFont(TTFont(font_name, bundled_font))
             return font_name
         except:
             pass
+    # フォールバック: システムフォント（.ttf のみ）
+    system_fonts = [
+        "/usr/share/fonts/truetype/fonts-japanese-gothic.ttf",
+    ]
+    for fp in system_fonts:
+        if os.path.exists(fp):
+            try:
+                pdfmetrics.registerFont(TTFont(font_name, fp))
+                return font_name
+            except:
+                pass
 
     return "Helvetica"
 
